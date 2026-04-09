@@ -1,0 +1,17 @@
+Cara Mengujinya di Postman:
+1. Buka aplikasi Postman Anda.
+2. Klik tombol Import (biasanya di sudut kiri atas).
+3. Pilih file SakuPintar.postman_collection.json yang ada di dalam folder backend/.
+4. Koleksi baru bernama "SakuPintar Backend API" akan muncul dengan folder yang berurutan rapi dari Authentication hingga Budgeting.
+5. Klik folder Authentication -> Register User Baru -> Send. Pastikan statusnya 201 Created.
+6. Klik folder Authentication -> Login -> Send. Salin nilai token yang muncul di response body.
+7. Klik folder Profil User -> Update Saldo & Limit -> Pilih tab Authorization -> Pilih type Bearer Token -> Paste token tadi ke kolom Token -> Send.
+8. Lanjutkan ke folder Kategori, Transaksi, Saving Goals, dan Budgeting dengan cara yang sama.
+
+Langkah Pengetesan:
+
+1. Pastikan server database (MySQL) Anda sudah menyala, dan import tulisan kode di src/db/schema.sql ke dalam database MySQL Anda (misal aplikasinya phpMyAdmin) agar tabelnya tercipta.
+2. Jalankan server backend di terminal Anda (ketik cd backend lalu npm run dev).
+3. Di dalam Postman, jalankan request "Register User Baru" terlebih dahulu, lalu jalankan "Login".
+Keajaiban Postman: Saya sudah menyematkan sebuah script khusus di tombol Login tersebut. Begitu Anda mendapat respons Login yang sukses, Postman akan mengambil otomatis Token JWT-nya dan menyimpannya ke dalam variabel {{token}}.
+4. Coba jalankan seluruh endpoint selanjutnya sesuka Anda! Anda tidak perlu lagi melakukan copy-paste token satu per satu karena setiap request (seperti profil atau transaksi) sudah diprogram untuk membaca Token secara otomatis.

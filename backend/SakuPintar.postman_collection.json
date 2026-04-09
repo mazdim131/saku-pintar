@@ -1,0 +1,218 @@
+{
+  "info": {
+    "name": "SakuPintar Backend API",
+    "description": "API endpoints untuk aplikasi manajemen keuangan SakuPintar",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register User Baru",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hanin Saku\",\n  \"email\": \"hanin@gmail.com\",\n  \"password\": \"rahasia123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if(response.token) {",
+                  "    pm.collectionVariables.set(\"token\", response.token);",
+                  "    console.log(\"Token JWT berhasil disimpan ke spesifik collection ini!\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"hanin@gmail.com\",\n  \"password\": \"rahasia123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Profil User",
+      "item": [
+        {
+          "name": "Update Saldo & Limit",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"total_balance\": 1500000,\n  \"limit\": 500000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Kategori",
+      "item": [
+        {
+          "name": "Ambil Semua Kategori",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/categories", "host": ["{{base_url}}"], "path": ["api", "categories"]}
+          }
+        },
+        {
+          "name": "Buat Kategori Baru",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Makan & Minum\",\n  \"type\": \"expense\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/categories", "host": ["{{base_url}}"], "path": ["api", "categories"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Transaksi",
+      "item": [
+        {
+          "name": "Ambil Semua Transaksi",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/transactions", "host": ["{{base_url}}"], "path": ["api", "transactions"]}
+          }
+        },
+        {
+          "name": "Buat Transaksi Baru",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"amount\": 25000,\n  \"transaction_date\": \"2023-11-20\",\n  \"note\": \"Makan Siang Nasi Padang\",\n  \"type\": \"expense\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/transactions", "host": ["{{base_url}}"], "path": ["api", "transactions"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Saving Goals",
+      "item": [
+        {
+          "name": "Ambil Semua Saving Goals",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/saving-goals", "host": ["{{base_url}}"], "path": ["api", "saving-goals"]}
+          }
+        },
+        {
+          "name": "Buat Target Tabungan",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Beli Laptop Baru\",\n  \"target_amount\": 15000000,\n  \"deadline\": \"2025-01-01\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/saving-goals", "host": ["{{base_url}}"], "path": ["api", "saving-goals"]}
+          }
+        },
+        {
+          "name": "Tambah Dana ke Tabungan",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000000\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/saving-goals/1/add-funds", "host": ["{{base_url}}"], "path": ["api", "saving-goals", "1", "add-funds"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Budgeting",
+      "item": [
+        {
+          "name": "Ambil Semua Budget",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/budgets", "host": ["{{base_url}}"], "path": ["api", "budgets"]}
+          }
+        },
+        {
+          "name": "Buat Budget Baru",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"amount\": 500000,\n  \"period\": \"weekly\",\n  \"start_date\": \"2023-11-01\",\n  \"end_date\": \"2023-11-07\"\n}"
+            },
+            "url": {"raw": "{{base_url}}/api/budgets", "host": ["{{base_url}}"], "path": ["api", "budgets"]}
+          }
+        },
+        {
+          "name": "Cek Status Sisa Budget",
+          "request": {
+            "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/api/budgets/status", "host": ["{{base_url}}"], "path": ["api", "budgets", "status"]}
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
