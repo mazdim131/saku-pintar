@@ -13,7 +13,7 @@ export default function AuthPage() {
 
   const handleDemo = () => {
     login(
-      { id: 'demo', name: 'Demo User', email: 'demo@sakupintar.local', total_balance: 2500000, limit: 5000000 },
+      { id: 'demo', name: 'Demo User', email: 'demo@sakupintar.local', total_balance: 2500000 },
       'demo-token'
     );
   };

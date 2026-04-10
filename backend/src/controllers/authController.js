@@ -92,8 +92,7 @@ export const login = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        total_balance: user.total_balance,
-        limit: user.limit
+        total_balance: user.total_balance
       }
     });
   } catch (error) {

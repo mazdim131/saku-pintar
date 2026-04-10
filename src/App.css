@@ -95,12 +95,6 @@ body {
 .stat-value.income { color: var(--income); }
 .stat-value.expense { color: var(--expense); }
 .stat-meta { font-size: 11px; color: var(--text-muted); }
-.limit-bar-wrap { display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; }
-.limit-bar { flex: 1; height: 6px; background: var(--bg); border-radius: 99px; overflow: hidden; }
-.limit-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.5s; }
-.limit-fill.warning { background: var(--warning); }
-.limit-fill.danger { background: var(--expense); }
-.limit-pct { font-size: 11px; font-weight: 600; color: var(--text-secondary); }
 
 /* ALERTS */
 .alert-section { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
