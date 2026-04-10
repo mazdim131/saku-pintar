@@ -15,6 +15,7 @@ export default function Dashboard({ onNavigate }) {
 
   useEffect(() => {
     const fetchAll = async () => {
+      setLoading(true);
       try {
         const [tx, bs, sg] = await Promise.all([
           api.getTransactions(),
@@ -31,6 +32,10 @@ export default function Dashboard({ onNavigate }) {
       }
     };
     fetchAll();
+
+    const handleRefresh = () => fetchAll();
+    window.addEventListener('refreshDashboard', handleRefresh);
+    return () => window.removeEventListener('refreshDashboard', handleRefresh);
   }, []);
 
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);

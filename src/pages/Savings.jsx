@@ -92,6 +92,7 @@ export default function Savings() {
       setShowFundModal(null);
       setFundAmount('');
       fetchGoals();
+      window.dispatchEvent(new Event('refreshDashboard'));
     } catch (e) { alert(e.message); }
   };
 

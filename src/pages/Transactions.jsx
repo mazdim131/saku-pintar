@@ -81,6 +81,7 @@ export default function Transactions() {
       }
       setShowModal(false);
       fetchData();
+      window.dispatchEvent(new Event('refreshDashboard'));
     } catch (e) {
       console.error('Error submitting transaction:', e);
       setError(e.message); 
@@ -94,6 +95,7 @@ export default function Transactions() {
       const result = await api.deleteTransaction(id);
       if (result.user) updateUser(result.user);
       fetchData();
+      window.dispatchEvent(new Event('refreshDashboard'));
     } catch (e) { alert(e.message); }
   };
 
