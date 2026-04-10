@@ -35,7 +35,7 @@ export default function Dashboard({ onNavigate }) {
 
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
-  const balance = user?.total_balance ?? (totalIncome - totalExpense);
+  const balance = totalIncome - totalExpense;
   const limit = parseFloat(user?.limit || 0);
   const limitUsed = limit > 0 ? Math.min((totalExpense / limit) * 100, 100) : 0;
 

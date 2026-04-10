@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import { formatRupiah, formatDate, formatDateInput } from '../utils/format';
 import Modal from '../components/Modal';
@@ -6,6 +7,7 @@ import Modal from '../components/Modal';
 const EMPTY_FORM = { category_id: '', amount: '', transaction_date: '', note: '', type: 'expense' };
 
 export default function Transactions() {
+  const { updateUser } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,13 +73,15 @@ export default function Transactions() {
     setError('');
     try {
       if (editItem) {
-        await api.updateTransaction(editItem.id, form);
+        const result = await api.updateTransaction(editItem.id, form);
+        if (result.user) updateUser(result.user);
       } else {
-        await api.createTransaction(form);
+        const result = await api.createTransaction(form);
+        if (result.user) updateUser(result.user);
       }
       setShowModal(false);
       fetchData();
-    } catch (e) { 
+    } catch (e) {
       console.error('Error submitting transaction:', e);
       setError(e.message); 
     }
@@ -87,7 +91,8 @@ export default function Transactions() {
   const handleDelete = async (id) => {
     if (!confirm('Hapus transaksi ini?')) return;
     try {
-      await api.deleteTransaction(id);
+      const result = await api.deleteTransaction(id);
+      if (result.user) updateUser(result.user);
       fetchData();
     } catch (e) { alert(e.message); }
   };
