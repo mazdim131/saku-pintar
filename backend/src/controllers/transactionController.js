@@ -55,7 +55,7 @@ export const createTransaction = async (req, res) => {
     // 4. Menerapkan/menyimpan perubahan permanen (Commit) jika kedua query di atas berhasil
     await db.query('COMMIT');
     
-    const [users] = await db.query('SELECT id, name, email, total_balance FROM users WHERE id = ?', [req.user.id]);
+    const [users] = await db.query('SELECT id, name, email, total_balance, `limit` FROM users WHERE id = ?', [req.user.id]);
     res.status(201).json({ message: 'Transaksi berhasil dibuat dan saldo diperbarui', id: result.insertId, user: users[0] });
   } catch (error) {
     // 5. Membatalkan (Rollback) perubahan jika terjadi error (misalnya koneksi database terputus di tengah jalan)
@@ -105,7 +105,7 @@ export const updateTransaction = async (req, res) => {
 
     await db.query('COMMIT');
     
-    const [users] = await db.query('SELECT id, name, email, total_balance FROM users WHERE id = ?', [req.user.id]);
+    const [users] = await db.query('SELECT id, name, email, total_balance, `limit` FROM users WHERE id = ?', [req.user.id]);
     res.json({ message: 'Transaksi berhasil diperbarui', user: users[0] });
   } catch (error) {
     await db.query('ROLLBACK');
@@ -141,7 +141,7 @@ export const deleteTransaction = async (req, res) => {
     
     await db.query('COMMIT');
     
-    const [users] = await db.query('SELECT id, name, email, total_balance FROM users WHERE id = ?', [req.user.id]);
+    const [users] = await db.query('SELECT id, name, email, total_balance, `limit` FROM users WHERE id = ?', [req.user.id]);
     res.json({ message: 'Transaksi berhasil dihapus dan saldo sudah dikembalikan', user: users[0] });
   } catch (error) {
     await db.query('ROLLBACK');
