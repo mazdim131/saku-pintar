@@ -79,7 +79,7 @@ export default function Dashboard({ onNavigate }) {
         <div className="alert-section">
           {exceededBudgets.map(b => (
             <div key={b.id} className="alert alert-danger">
-              ⚠️ Anggaran <strong>{b.category_name || 'Umum'}</strong> sudah melebihi limit! (Terpakai: {formatRupiah(b.total_spent)} / {formatRupiah(b.amount)})
+              ⚠️ Anggaran <strong>{b.category_name || 'Umum'}</strong> sudah melebihi batas! (Terpakai: {formatRupiah(b.total_spent)} / {formatRupiah(b.amount)})
             </div>
           ))}
           {nearBudgets.map(b => (
