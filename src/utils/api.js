@@ -30,9 +30,6 @@ export const api = {
   register: (body) => request('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   login: (body) => request('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
 
-  // User
-  updateProfile: (body) => request('/users/profile', { method: 'PUT', body: JSON.stringify(body) }),
-
   // Categories
   getCategories: () => request('/categories'),
   createCategory: (body) => request('/categories', { method: 'POST', body: JSON.stringify(body) }),
