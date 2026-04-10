@@ -2,16 +2,13 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import { formatRupiah, formatDate } from '../utils/format';
-import Modal from '../components/Modal';
 
 export default function Dashboard({ onNavigate }) {
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [budgetStatus, setBudgetStatus] = useState([]);
   const [savingGoals, setSavingGoals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showLimitModal, setShowLimitModal] = useState(false);
-  const [limitInput, setLimitInput] = useState(user?.limit || 0);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -41,20 +38,8 @@ export default function Dashboard({ onNavigate }) {
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
   const balance = totalIncome - totalExpense;
-  const limit = parseFloat(user?.limit || 0);
-  const limitUsed = limit > 0 ? Math.min((totalExpense / limit) * 100, 100) : 0;
 
   const recentTx = transactions.slice(0, 5);
-
-  const handleSaveLimit = async () => {
-    try {
-      const result = await api.updateProfile({ limit: parseFloat(limitInput) });
-      updateUser(result.user);
-      setShowLimitModal(false);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
 
   if (loading) return <div className="page-loading"><div className="spinner"></div></div>;
 
@@ -86,22 +71,6 @@ export default function Dashboard({ onNavigate }) {
           <div className="stat-label">Total Pengeluaran</div>
           <div className="stat-value expense">{formatRupiah(totalExpense)}</div>
           <div className="stat-meta">{transactions.filter(t => t.type === 'expense').length} transaksi</div>
-        </div>
-        <div className="stat-card stat-limit" onClick={() => { setLimitInput(limit); setShowLimitModal(true); }} style={{cursor:'pointer'}}>
-          <div className="stat-label">Limit Pengeluaran</div>
-          <div className="stat-value">{limit > 0 ? formatRupiah(limit) : 'Belum diset'}</div>
-          {limit > 0 && (
-            <div className="limit-bar-wrap">
-              <div className="limit-bar">
-                <div
-                  className={`limit-fill ${limitUsed >= 100 ? 'danger' : limitUsed >= 80 ? 'warning' : ''}`}
-                  style={{ width: `${limitUsed}%` }}
-                />
-              </div>
-              <span className="limit-pct">{Math.round(limitUsed)}%</span>
-            </div>
-          )}
-          <div className="stat-meta">Klik untuk ubah limit</div>
         </div>
       </div>
 
@@ -180,24 +149,6 @@ export default function Dashboard({ onNavigate }) {
           )}
         </div>
       </div>
-
-      {showLimitModal && (
-        <Modal title="Set Limit Pengeluaran" onClose={() => setShowLimitModal(false)}>
-          <div className="form-group">
-            <label>Limit Pengeluaran (Rp)</label>
-            <input
-              type="number"
-              value={limitInput}
-              onChange={e => setLimitInput(e.target.value)}
-              placeholder="Contoh: 5000000"
-            />
-          </div>
-          <div className="modal-actions">
-            <button className="btn-secondary" onClick={() => setShowLimitModal(false)}>Batal</button>
-            <button className="btn-primary" onClick={handleSaveLimit}>Simpan</button>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }
