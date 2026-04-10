@@ -1,4 +1,3 @@
-// Configure via `.env` (VITE_API_BASE_URL). Defaults to Vite dev proxy `/api`.
 const BASE_URL = 'https://saku-pintar-production.up.railway.app/api';
 
 function getToken() {
