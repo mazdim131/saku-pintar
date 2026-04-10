@@ -17,6 +17,8 @@ import budgetRoutes from './routes/budgetRoutes.js';
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
+
 const isProd = process.env.NODE_ENV === 'production';
 
 // Setup logging
