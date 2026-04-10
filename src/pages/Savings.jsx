@@ -20,7 +20,10 @@ export default function Savings() {
     try {
       const data = await api.getSavingGoals();
       setGoals(data);
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error('Error fetching goals:', e);
+      setError('Gagal memuat data. Silakan refresh halaman.');
+    }
     finally { setLoading(false); }
   };
 
@@ -45,8 +48,16 @@ export default function Savings() {
   };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.target_amount || !form.deadline) {
-      setError('Semua field wajib diisi');
+    if (!form.name || !form.name.trim()) {
+      setError('Nama target wajib diisi');
+      return;
+    }
+    if (!form.target_amount || parseFloat(form.target_amount) <= 0) {
+      setError('Target jumlah harus lebih dari 0');
+      return;
+    }
+    if (!form.deadline) {
+      setError('Deadline wajib dipilih');
       return;
     }
     setSaving(true);
@@ -59,7 +70,10 @@ export default function Savings() {
       }
       setShowModal(false);
       fetchGoals();
-    } catch (e) { setError(e.message); }
+    } catch (e) { 
+      console.error('Error submitting saving goal:', e);
+      setError(e.message); 
+    }
     finally { setSaving(false); }
   };
 

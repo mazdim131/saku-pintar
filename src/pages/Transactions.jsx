@@ -17,13 +17,17 @@ export default function Transactions() {
   const [filter, setFilter] = useState('all'); // all | income | expense
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [quickAddCat, setQuickAddCat] = useState('');
 
   const fetchData = async () => { 
     try {
       const [tx, cats] = await Promise.all([api.getTransactions(), api.getCategories()]);
       setTransactions(tx);
       setCategories(cats);
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      console.error('Error fetching data:', e);
+      setError('Gagal memuat data. Silakan refresh halaman.');
+    }
     finally { setLoading(false); }
   };
 
@@ -50,10 +54,19 @@ export default function Transactions() {
   };
 
   const handleSubmit = async () => {
-    if (!form.category_id || !form.amount || !form.transaction_date) {
-      setError('Kategori, jumlah, dan tanggal wajib diisi');
+    if (!form.category_id) {
+      setError('Pilih atau buat kategori terlebih dahulu');
       return;
     }
+    if (!form.amount) {
+      setError('Masukkan jumlah');
+      return;
+    }
+    if (!form.transaction_date) {
+      setError('Pilih tanggal');
+      return;
+    }
+    
     setSaving(true);
     setError('');
     try {
@@ -64,7 +77,10 @@ export default function Transactions() {
       }
       setShowModal(false);
       fetchData();
-    } catch (e) { setError(e.message); }
+    } catch (e) { 
+      console.error('Error submitting transaction:', e);
+      setError(e.message); 
+    }
     finally { setSaving(false); }
   };
 
@@ -79,12 +95,51 @@ export default function Transactions() {
   const handleAddCategory = async () => {
     if (!catForm.name) return;
     try {
-      await api.createCategory(catForm);
+      const result = await api.createCategory(catForm);
       const cats = await api.getCategories();
       setCategories(cats);
       setCatForm({ name: '', type: 'expense' });
       setShowCatModal(false);
-    } catch (e) { alert(e.message); }
+      
+      // If we're currently in a transaction modal and type matches, auto-select this category
+      if (showModal && catForm.type === form.type) {
+        if (result && result.id) {
+          setForm({ ...form, category_id: result.id });
+        } else {
+          const newCat = cats.find(c => c.name === catForm.name && c.type === catForm.type);
+          if (newCat) {
+            setForm({ ...form, category_id: newCat.id });
+          }
+        }
+      }
+    } catch (e) { 
+      console.error('Error creating category:', e);
+      alert(e.message); 
+    }
+  };
+
+  const handleQuickAddCategory = async () => {
+    if (!quickAddCat.trim()) return;
+    try {
+      const result = await api.createCategory({ name: quickAddCat, type: form.type });
+      const cats = await api.getCategories();
+      setCategories(cats);
+      
+      // Auto-select newly created category using the returned ID
+      if (result && result.id) {
+        setForm({ ...form, category_id: result.id });
+      } else {
+        // Fallback: find by name and type
+        const createdCat = cats.find(c => c.name === quickAddCat && c.type === form.type);
+        if (createdCat) {
+          setForm({ ...form, category_id: createdCat.id });
+        }
+      }
+      setQuickAddCat('');
+    } catch (e) { 
+      console.error('Error creating category:', e);
+      alert(e.message); 
+    }
   };
 
   const filteredCats = categories.filter(c => c.type === form.type);
@@ -155,19 +210,44 @@ export default function Transactions() {
           <div className="form-row">
             <div className="form-group">
               <label>Tipe</label>
-              <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value, category_id: '' })}>
+              <select value={form.type} onChange={e => {
+                setForm({ ...form, type: e.target.value, category_id: '' });
+                setQuickAddCat('');
+              }}>
                 <option value="expense">Pengeluaran</option>
                 <option value="income">Pemasukan</option>
               </select>
             </div>
             <div className="form-group">
               <label>Kategori</label>
-              <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })}>
-                <option value="">Pilih kategori</option>
-                {filteredCats.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+              {filteredCats.length === 0 ? (
+                <div className="quick-add-cat">
+                  <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Belum ada kategori. Buat yang baru:</p>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <input 
+                      type="text" 
+                      placeholder="Nama kategori..." 
+                      value={quickAddCat} 
+                      onChange={e => setQuickAddCat(e.target.value)}
+                      style={{ flex: 1 }}
+                    />
+                    <button 
+                      className="btn-secondary" 
+                      onClick={handleQuickAddCategory}
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      + Buat
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })}>
+                  <option value="">Pilih kategori</option>
+                  {filteredCats.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
           <div className="form-row">

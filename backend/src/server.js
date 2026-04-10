@@ -78,7 +78,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: {
-    error: 'Too many requests from this IP, please try again later.'
+    error: 'Terlalu banyak permintaan, Silahkan coba lagi nanti.'
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -86,9 +86,9 @@ const limiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit auth attempts
+  max: 10, // limit auth attempts
   message: {
-    error: 'Too many authentication attempts, please try again later.'
+    error: 'Terlalu banyak percobaan, Silahkan coba lagi nanti.'
   },
   standardHeaders: true,
   legacyHeaders: false,

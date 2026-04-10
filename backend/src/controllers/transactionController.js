@@ -21,8 +21,18 @@ export const getTransactions = async (req, res) => {
 export const createTransaction = async (req, res) => {
   const { category_id, amount, transaction_date, note, type } = req.body;
   
-  if (!category_id || !amount || !transaction_date || !type) {
-    return res.status(400).json({ message: 'Semua field wajib diisi' });
+  // Validation
+  if (!category_id) {
+    return res.status(400).json({ message: 'Category is required' });
+  }
+  if (!amount || parseFloat(amount) <= 0) {
+    return res.status(400).json({ message: 'Amount must be greater than 0' });
+  }
+  if (!transaction_date) {
+    return res.status(400).json({ message: 'Transaction date is required' });
+  }
+  if (!type || !['income', 'expense'].includes(type)) {
+    return res.status(400).json({ message: 'Type must be either income or expense' });
   }
 
   try {

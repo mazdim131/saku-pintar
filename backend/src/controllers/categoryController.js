@@ -11,12 +11,21 @@ export const getCategories = async (req, res) => {
 
 export const createCategory = async (req, res) => {
   const { name, type } = req.body;
-  if (!name || !type) return res.status(400).json({ message: 'Name and type are required' });
+  
+  if (!name || !name.trim()) {
+    return res.status(400).json({ message: 'Category name is required' });
+  }
+  if (!type || !['income', 'expense'].includes(type)) {
+    return res.status(400).json({ message: 'Type must be either income or expense' });
+  }
 
   try {
-    const [result] = await db.query('INSERT INTO categories (user_id, name, type) VALUES (?, ?, ?)', [req.user.id, name, type]);
-    res.status(201).json({ message: 'Category created', id: result.insertId, name, type });
+    const [result] = await db.query('INSERT INTO categories (user_id, name, type) VALUES (?, ?, ?)', [req.user.id, name.trim(), type]);
+    res.status(201).json({ message: 'Category created', id: result.insertId, name: name.trim(), type });
   } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ message: 'Category with this name already exists for this type' });
+    }
     res.status(500).json({ error: error.message });
   }
 };

@@ -16,14 +16,21 @@ export const getSavingGoals = async (req, res) => {
 // Membuat target tabungan baru
 export const createSavingGoal = async (req, res) => {
   const { name, target_amount, deadline } = req.body;
-  if (!name || !target_amount || !deadline) {
-    return res.status(400).json({ message: 'Semua field (name, target_amount, deadline) wajib diisi' });
+  
+  if (!name || !name.trim()) {
+    return res.status(400).json({ message: 'Goal name is required' });
+  }
+  if (!target_amount || parseFloat(target_amount) <= 0) {
+    return res.status(400).json({ message: 'Target amount must be greater than 0' });
+  }
+  if (!deadline) {
+    return res.status(400).json({ message: 'Deadline is required' });
   }
 
   try {
     const [result] = await db.query(
       'INSERT INTO saving_goals (user_id, name, target_amount, deadline) VALUES (?, ?, ?, ?)',
-      [req.user.id, name, target_amount, deadline]
+      [req.user.id, name.trim(), target_amount, deadline]
     );
     res.status(201).json({ message: 'Target tabungan berhasil dibuat', id: result.insertId });
   } catch (error) {
