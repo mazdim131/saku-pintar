@@ -1,4 +1,4 @@
-const BASE_URL = 'https://saku-pintar-alpha.vercel.app';
+const BASE_URL = 'https://saku-pintar-production.up.railway.app/api';
 
 function getToken() {
   return localStorage.getItem('token');
